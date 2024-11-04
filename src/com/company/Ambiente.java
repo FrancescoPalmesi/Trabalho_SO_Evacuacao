@@ -32,8 +32,10 @@ class Ambiente {
     }
 
     public synchronized void moverPessoa(Pessoa pessoa, int x, int y) {
+        // validar se a posição desejada é valida
         if (x >= 0 && x < tamanho && y >= 0 && y < tamanho) {
             for (Pessoa outraPessoa : pessoas) {
+                // validar se a posição desejada já está ocupada
                 if (outraPessoa != null && outraPessoa != pessoa && outraPessoa.getX() == x && outraPessoa.getY() == y) {
                     return;
                 }
