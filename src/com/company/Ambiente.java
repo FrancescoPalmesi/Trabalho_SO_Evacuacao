@@ -46,7 +46,7 @@ class Ambiente {
 
     public synchronized void saidaBemSucedida(Pessoa pessoa) {
         pessoa.setPosition(-1, -1);
-        System.out.println("Uma pessoa saiu com sucesso do ambiente.");
+        System.out.println("A "+ pessoa.getNome() + " saiu com sucesso do ambiente.");
         pessoasRestantes--;
 
         if (todasSairam()) {

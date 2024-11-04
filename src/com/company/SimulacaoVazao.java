@@ -2,9 +2,9 @@ package com.company;
 
 public class SimulacaoVazao {
     public static void main(String[] args) {
-        int tamanhoAmbiente = 10;
+        int tamanhoAmbiente = 8;
         int limiteDeTempo = 10; // 60 segundos
-        int numPessoas = 10;
+        int numPessoas = 5;
         int numPortas = 4;
 
         Ambiente ambiente = new Ambiente(tamanhoAmbiente, limiteDeTempo, numPessoas, numPortas);
