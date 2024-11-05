@@ -26,16 +26,14 @@ class Ambiente {
         }
 
         for (int i = 0; i < numPessoas; i++) {
-            pessoas[i] = new Pessoa("Pessoa " + i, this);
+            pessoas[i] = new Pessoa(String.valueOf(i), this);
             pessoas[i].start();
         }
     }
 
     public synchronized void moverPessoa(Pessoa pessoa, int x, int y) {
-        // validar se a posição desejada é valida
         if (x >= 0 && x < tamanho && y >= 0 && y < tamanho) {
             for (Pessoa outraPessoa : pessoas) {
-                // validar se a posição desejada já está ocupada
                 if (outraPessoa != null && outraPessoa != pessoa && outraPessoa.getX() == x && outraPessoa.getY() == y) {
                     return;
                 }
@@ -46,7 +44,7 @@ class Ambiente {
 
     public synchronized void saidaBemSucedida(Pessoa pessoa) {
         pessoa.setPosition(-1, -1);
-        System.out.println("A "+ pessoa.getNome() + " saiu com sucesso do ambiente.");
+        System.out.println("\nA pessoa " + pessoa.getNome() + " saiu com sucesso do ambiente.\n");
         pessoasRestantes--;
 
         if (todasSairam()) {
@@ -57,7 +55,7 @@ class Ambiente {
 
     public boolean todasSairam() {
         for (Pessoa pessoa : pessoas) {
-            if (pessoa != null) {
+            if (pessoa != null && pessoa.getX() != -1 && pessoa.getY() != -1) {
                 return false;
             }
         }
@@ -71,7 +69,7 @@ class Ambiente {
                 boolean portaNoLocal = false;
                 for (Pessoa pessoa : pessoas) {
                     if (pessoa != null && pessoa.getX() == i && pessoa.getY() == j) {
-                        System.out.print("X ");
+                        System.out.print(pessoa.getNome() + " ");
                         pessoaNoLocal = true;
                         break;
                     }
@@ -89,6 +87,60 @@ class Ambiente {
             }
             System.out.println("");
         }
+        System.out.println("");
+    }
+
+    public void moverParaPortaMaisProxima() {
+        for (Pessoa pessoa : pessoas) {
+
+            if (pessoa != null && pessoa.getX() != -1 && pessoa.getY() != -1) {
+                int[] portaMaisProxima = encontrarPortaMaisProxima(pessoa);
+                moverPessoaParaPorta(pessoa, portaMaisProxima[0], portaMaisProxima[1]);
+            }
+        }
+    }
+
+    private int[] encontrarPortaMaisProxima(Pessoa pessoa) {
+        int menorDistancia = Integer.MAX_VALUE;
+        int portaX = -1, portaY = -1;
+
+        for (int k = 0; k < numPortas; k++) {
+            int dx = Math.abs(pessoa.getX() - portasX[k]);
+            int dy = Math.abs(pessoa.getY() - portasY[k]);
+            int distancia = dx + dy;
+
+            if (distancia < menorDistancia) {
+                menorDistancia = distancia;
+                portaX = portasX[k];
+                portaY = portasY[k];
+            }
+        }
+        return new int[]{portaX, portaY};
+    }
+
+    private synchronized void moverPessoaParaPorta(Pessoa pessoa, int portaX, int portaY) {
+        while (pessoa.getX() != portaX || pessoa.getY() != portaY) {
+            if (pessoa.getX() == -1 && pessoa.getY() == -1) {
+                return; // Pessoa já saiu do ambiente
+            }
+            int newX = pessoa.getX();
+            int newY = pessoa.getY();
+
+            if (newX < portaX) newX++;
+            else if (newX > portaX) newX--;
+
+            if (newY < portaY) newY++;
+            else if (newY > portaY) newY--;
+
+            moverPessoa(pessoa, newX, newY);
+            mostrarAmbiente(); // Mostrar o ambiente após cada movimento
+            try {
+                Thread.sleep(1000); // Pausa para cada passo
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        saidaBemSucedida(pessoa);
     }
 
     public int getTamanho() {

@@ -2,10 +2,10 @@ package com.company;
 
 public class SimulacaoVazao {
     public static void main(String[] args) {
-        int tamanhoAmbiente = 8;
+        int tamanhoAmbiente = 10;
         int limiteDeTempo = 10; // 60 segundos
-        int numPessoas = 5;
-        int numPortas = 4;
+        int numPessoas = 9;
+        int numPortas = 2;
 
         Ambiente ambiente = new Ambiente(tamanhoAmbiente, limiteDeTempo, numPessoas, numPortas);
 
@@ -23,8 +23,15 @@ public class SimulacaoVazao {
             System.out.println("Parabéns, o ambiente foi esvaziado com sucesso!");
             System.exit(0);
         } else {
-            System.out.println(pessoasRestantes + " pessoa(s) não conseguiram achar a saída.");
-            System.exit(1);
+            System.out.println("O tempo acabou. As pessoas restantes estão se movendo para a porta mais próxima.");
+            ambiente.moverParaPortaMaisProxima();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("\nTodas as pessoas restantes saíram do ambiente.");
+            System.exit(0);
         }
     }
 }
