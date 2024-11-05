@@ -92,7 +92,6 @@ class Ambiente {
 
     public void moverParaPortaMaisProxima() {
         for (Pessoa pessoa : pessoas) {
-
             if (pessoa != null && pessoa.getX() != -1 && pessoa.getY() != -1) {
                 int[] portaMaisProxima = encontrarPortaMaisProxima(pessoa);
                 moverPessoaParaPorta(pessoa, portaMaisProxima[0], portaMaisProxima[1]);
@@ -126,11 +125,48 @@ class Ambiente {
             int newX = pessoa.getX();
             int newY = pessoa.getY();
 
-            if (newX < portaX) newX++;
-            else if (newX > portaX) newX--;
+            boolean moved = false;
 
-            if (newY < portaY) newY++;
-            else if (newY > portaY) newY--;
+
+            if (newX < portaX) {
+                if (isPositionFree(newX + 1, newY)) {
+                    newX++;
+                    moved = true;
+                }
+            } else if (newX > portaX) {
+                if (isPositionFree(newX - 1, newY)) {
+                    newX--;
+                    moved = true;
+                }
+            }
+
+
+            if (!moved) {
+                if (newY < portaY) {
+                    if (isPositionFree(newX, newY + 1)) {
+                        newY++;
+                        moved = true;
+                    }
+                } else if (newY > portaY) {
+                    if (isPositionFree(newX, newY - 1)) {
+                        newY--;
+                        moved = true;
+                    }
+                }
+            }
+
+
+            if (!moved) {
+                if (isPositionFree(newX + 1, newY)) {
+                    newX++;
+                } else if (isPositionFree(newX - 1, newY)) {
+                    newX--;
+                } else if (isPositionFree(newX, newY + 1)) {
+                    newY++;
+                } else if (isPositionFree(newX, newY - 1)) {
+                    newY--;
+                }
+            }
 
             moverPessoa(pessoa, newX, newY);
             mostrarAmbiente(); // Mostrar o ambiente após cada movimento
@@ -141,6 +177,15 @@ class Ambiente {
             }
         }
         saidaBemSucedida(pessoa);
+    }
+
+    private boolean isPositionFree(int x, int y) {
+        for (Pessoa outraPessoa : pessoas) {
+            if (outraPessoa != null && outraPessoa.getX() == x && outraPessoa.getY() == y) {
+                return false;
+            }
+        }
+        return x >= 0 && x < tamanho && y >= 0 && y < tamanho;
     }
 
     public int getTamanho() {
